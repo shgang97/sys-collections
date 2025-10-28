@@ -12,11 +12,10 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	// 设置路由
-	router := server.SetupRouter(cfg)
-
 	// 创建服务器
-	srv := server.New(cfg, router)
+	srv := server.New(cfg, nil)
+	// 设置路由
+	server.SetupRouter(cfg, srv)
 
 	// 启动服务器
 	if err := srv.Start(); err != nil {

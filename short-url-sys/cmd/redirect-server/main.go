@@ -17,11 +17,10 @@ func main() {
 	cfg.Server.APIServer.Host = cfg.Server.RedirectServer.Host
 	cfg.Server.APIServer.Mode = cfg.Server.RedirectServer.Mode
 
-	// 设置路由
-	router := server.SetupRouter(cfg)
-
 	// 创建服务器
-	srv := server.New(cfg, router)
+	srv := server.New(cfg, nil)
+	// 设置路由
+	server.SetupRouter(cfg, srv)
 
 	// 启动服务器
 	if err := srv.Start(); err != nil {

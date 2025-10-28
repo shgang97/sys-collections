@@ -64,7 +64,7 @@ type LogConfig struct {
 type Config struct {
 	Server      ServerConfig      `mapstructure:"server"`
 	Database    DatabaseConfig    `mapstructure:"database"`
-	redis       RedisConfig       `mapstructure:"redis"`
+	Redis       RedisConfig       `mapstructure:"redis"`
 	IdGenerator IDGeneratorConfig `mapstructure:"id_generator"`
 	Cache       CacheConfig       `mapstructure:"cache"`
 	Log         LogConfig         `mapstructure:"log"`
