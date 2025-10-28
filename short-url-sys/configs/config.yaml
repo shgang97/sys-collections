@@ -11,7 +11,7 @@ server:
 
 database:
   mysql:
-    dsn: "appuser:apppass@tcp(mysql:3306)/shorten_url?charset=utf8mb4&parseTime=True&loc=Local"
+    dsn: "appuser:apppass@tcp(mysql:3306)/short_url?charset=utf8mb4&parseTime=True&loc=Local"
     max_idle_conns: 10
     max_open_conns: 100
     conn_max_lifetime: 3600
