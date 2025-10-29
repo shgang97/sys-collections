@@ -156,12 +156,24 @@ func (s *linkService) GetLongURL(ctx context.Context, shortCode string) (string,
 }
 
 // GetLinkInfo 获取链接信息
-func (s *linkService) GetLinkInfo(ctx context.Context, shortCode string) (*model.Link, error) {
+func (s *linkService) GetLinkInfo(ctx context.Context, shortCode string) (*model.LinkInfoResponse, error) {
 	link, err := s.linkRepo.FindByShortCode(ctx, shortCode)
 	if err != nil {
 		return nil, err
 	}
-	return link, nil
+	lastAccess, _ := s.statsRepo.GetLastAccessed(ctx, shortCode)
+	linkInfo := &model.LinkInfoResponse{
+		ShortCode:    link.ShortCode,
+		LongURL:      link.LongURL,
+		CreatedAt:    link.CreatedAt,
+		UpdatedAt:    link.UpdatedAt,
+		ExpiresAt:    link.ExpiresAt,
+		ClickCount:   link.ClickCount,
+		LastAccessed: lastAccess,
+		Status:       string(link.Status),
+		Description:  link.Description,
+	}
+	return linkInfo, nil
 }
 
 // UpdateLink 更新链接信息

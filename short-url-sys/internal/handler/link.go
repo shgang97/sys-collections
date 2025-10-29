@@ -48,6 +48,26 @@ func (h *LinkHandler) CreateShortURL(c *gin.Context) {
 	c.JSON(http.StatusCreated, resp)
 }
 
+// GetLinkInfo
+// @Router /api/v1/links/{code} [get]
+func (h *LinkHandler) GetLinkInfo(c *gin.Context) {
+	shortCode := c.Param("code")
+	if shortCode == "" {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Error:   "invalid_short_code",
+			Message: "Short code is required",
+		})
+		return
+	}
+
+	linkInfo, err := h.linkService.GetLinkInfo(c.Request.Context(), shortCode)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, linkInfo)
+}
+
 // 构建完整的短链URL
 func (h *LinkHandler) buildShortURL(shortCode string) string {
 	return fmt.Sprintf("%s/%s", h.baseURL, shortCode)
