@@ -92,13 +92,18 @@ func (s *linkService) CreateShortURL(ctx context.Context, req *model.CreateShort
 	}
 
 	// 创建链接记录
+	createTime := time.Now()
+	user := s.getUser(req.CreatedBy)
 	link := &model.Link{
 		ShortCode:   shortCode,
 		LongURL:     normalizeURL,
 		ExpiresAt:   req.ExpiresAt,
-		CreatedBy:   s.getUser(req.CreatedBy),
-		CreatedAt:   time.Now(),
+		CreatedBy:   user,
+		CreatedAt:   createTime,
+		UpdatedBy:   user,
+		UpdatedAt:   createTime,
 		Status:      model.LinkStatusActive,
+		DeleteFlag:  "N",
 		Description: s.getDescription(req.Description),
 	}
 
