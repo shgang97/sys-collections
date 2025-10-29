@@ -10,9 +10,10 @@ type ServerConfig struct {
 }
 
 type APIConfig struct {
-	Port int    `mapstructure:"port"`
-	Host string `mapstructure:"host"`
-	Mode string `mapstructure:"mode"`
+	Port    int    `mapstructure:"port"`
+	Host    string `mapstructure:"host"`
+	Mode    string `mapstructure:"mode"`
+	BaseURL string `mapstructure:"base_url"`
 }
 
 type RedirectConfig struct {

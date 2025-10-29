@@ -3,6 +3,7 @@ package server
 import (
 	"short-url-sys/internal/config"
 	"short-url-sys/internal/model"
+	"short-url-sys/internal/server/middleware"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func SetupRouter(config *config.Config, srv *Server) {
 	// 全局中间件
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(middleware.ErrorHandler())
 
 	// 健康检查端点
 	router.GET("/health", func(c *gin.Context) {

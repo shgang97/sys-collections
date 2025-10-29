@@ -10,6 +10,9 @@ import (
 	"short-url-sys/internal/config"
 	"short-url-sys/internal/pkg/database"
 	"short-url-sys/internal/repository/cache"
+	"short-url-sys/internal/service/idgen"
+	linkService "short-url-sys/internal/service/link"
+	redirectService "short-url-sys/internal/service/redirect"
 	"syscall"
 	"time"
 
@@ -26,6 +29,9 @@ type Server struct {
 	linkRepo    linkRepo.Repository
 	statsRepo   statsRepo.Repository
 	cacheRepo   *cache.Repository
+	idGenerator idgen.Generator
+	linkSvc     linkService.Service
+	redirectSvc redirectService.Service
 }
 
 func New(config *config.Config, router http.Handler) *Server {
@@ -55,7 +61,37 @@ func (s *Server) initDatabase() error {
 	s.statsRepo = statsRepo.NewMySQLRepository(mysqlDB.DB)
 	s.cacheRepo = cache.NewRepository(redisClient.Client, &s.config.Cache)
 
-	log.Printf("init database success\n")
+	log.Printf("✅ init database success\n")
+	return nil
+}
+
+func (s *Server) initServices() error {
+	// 初始化ID生成器
+	idGenerator, err := idgen.NewIDGenerator(&s.config.IdGenerator, s.redisClient)
+	if err != nil {
+		return fmt.Errorf("init ID Generator failed: %w", err)
+	}
+	s.idGenerator = idGenerator
+
+	// 初始化短链服务
+	s.linkSvc = linkService.NewService(
+		s.linkRepo,
+		s.statsRepo,
+		s.cacheRepo,
+		s.idGenerator,
+		linkService.Config{
+			BaseURL: s.config.Server.APIServer.BaseURL,
+		},
+	)
+
+	// 初始化重定向服务
+	s.redirectSvc = redirectService.NewRedirectRequest(
+		s.linkRepo,
+		s.statsRepo,
+		s.cacheRepo,
+	)
+
+	log.Println("✅ Services initialized successfully")
 	return nil
 }
 
@@ -64,6 +100,12 @@ func (s *Server) Start() error {
 	if err := s.initDatabase(); err != nil {
 		return fmt.Errorf("failed to init database: %w", err)
 	}
+
+	// 初始化服务
+	if err := s.initServices(); err != nil {
+		return fmt.Errorf("failed to init services: %w", err)
+	}
+
 	apiServer := s.config.Server.APIServer
 	addr := fmt.Sprintf("%s:%d", apiServer.Host, apiServer.Port)
 	s.server = &http.Server{
@@ -123,4 +165,12 @@ func (s *Server) GetCacheRepository() *cache.Repository {
 
 func (s *Server) GetConfig() *config.Config {
 	return s.config
+}
+
+func (s *Server) GetLinkService() linkService.Service {
+	return s.linkSvc
+}
+
+func (s *Server) GetRedirectService() redirectService.Service {
+	return s.redirectSvc
 }
