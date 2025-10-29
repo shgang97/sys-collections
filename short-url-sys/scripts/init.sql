@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS links (
     update_by VARCHAR(100),
     description VARCHAR(100),
     delete_flag varchar(1),
+    version INT UNSIGNED DEFAULT 0,
     INDEX idx_short_code (short_code),
     INDEX idx_created_by (created_by),
     INDEX idx_status (status),
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS click_stats (
     update_by VARCHAR(100),
     description VARCHAR(100),
     delete_flag varchar(1),
+    version INT UNSIGNED DEFAULT 0,
     INDEX idx_short_code (short_code),
     INDEX idx_created_at (created_at)
     );

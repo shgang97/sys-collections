@@ -51,6 +51,7 @@ type Link struct {
 	UpdatedBy   string     `gorm:"size:100" json:"updated_by,omitempty"`
 	Description string     `gorm:"size:500" json:"description,omitempty"`
 	DeleteFlag  string     `gorm:"size:1" json:"delete_flag,omitempty"`
+	Version     uint       `gorm:"default:0" json:"version"`
 }
 
 // TableName 指定表名
@@ -87,6 +88,7 @@ type ClickStats struct {
 	UpdatedBy   string    `gorm:"size:100" json:"updated_by,omitempty"`
 	Description string    `gorm:"size:500" json:"description,omitempty"`
 	DeleteFlag  string    `gorm:"size:1" json:"delete_flag,omitempty"`
+	Version     uint      `gorm:"default:0" json:"version"`
 }
 
 // TableName 指定表名
