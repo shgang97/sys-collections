@@ -23,7 +23,7 @@ type BatchURLItem struct {
 
 // UpdateLinkRequest 更新链接请求
 type UpdateLinkRequest struct {
-	LongURL     string     `json:"long_url" binding:"required,url" binding:"omitempty,url"`
+	LongURL     *string    `json:"long_url" binding:"required,url" binding:"omitempty,url"` // 使用指针类型，区分“未设置”和“设置”
 	ExpiresAt   *time.Time `json:"expires_at,omitempty"`
 	Status      *string    `json:"status,omitempty" binding:"omitempty,oneof=active disabled"`
 	Description *string    `json:"description,omitempty" binding:"omitempty,max=500"`
