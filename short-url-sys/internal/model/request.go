@@ -29,6 +29,11 @@ type UpdateLinkRequest struct {
 	Description *string    `json:"description,omitempty" binding:"omitempty,max=500"`
 }
 
+type DeleteLinkRequest struct {
+	ShortCode *string `json:"short_code" binding:"required,short_code"`
+	UpdatedBy *string `json:"updated_by,omitempty" binding:"omitempty,max=100"`
+}
+
 // ListLinksRequest 列表查询请求
 type ListLinksRequest struct {
 	Page      int     `form:"page,default=1" binding:"omitempty,min=1"`

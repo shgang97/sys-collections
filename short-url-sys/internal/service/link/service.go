@@ -1,0 +1,19 @@
+package link
+
+import (
+	"context"
+	"short-url-sys/internal/model"
+)
+
+// Service 短链服务接口
+type Service interface {
+	CreateShortURL(ctx context.Context, req *model.CreateShortRequest) (*model.Link, error)
+	GetLongURL(ctx context.Context, shortCode string) (string, error)
+	GetLinkInfo(ctx context.Context, shortCode string) (*model.Link, error)
+	UpdateLink(ctx context.Context, shortCode string, req *model.UpdateLinkRequest) (*model.Link, error)
+	DeleteLink(ctx context.Context, req *model.DeleteLinkRequest) error
+	ListLinks(ctx context.Context, req *model.ListLinksRequest) (*model.ListLinksResponse, error)
+	BatchCreate(ctx context.Context, req *model.BatchCreateRequest) (*model.BatchCreateResponse, error)
+	ValidateURL(url string) error
+	NormalizeURL(url string) (string, error)
+}
