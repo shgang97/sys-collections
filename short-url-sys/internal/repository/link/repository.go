@@ -20,7 +20,7 @@ type Repository interface {
 	UpdateClickCount(ctx context.Context, shortCode string, increment int64) error
 
 	// Delete 删除链接
-	Delete(ctx context.Context, shortCode string) error
+	Delete(ctx context.Context, link *model.Link) error
 
 	// List 列表查询
 	List(ctx context.Context, filter ListFilter, page, pageSize int) ([]model.Link, int64, error)

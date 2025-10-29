@@ -79,8 +79,15 @@ func (r *MySQLRepository) UpdateClickCount(ctx context.Context, shortCode string
 	return nil
 }
 
-func (r *MySQLRepository) Delete(ctx context.Context, shortCode string) error {
-	result := r.db.WithContext(ctx).Where("short_code=?", shortCode).Delete(&model.Link{})
+func (r *MySQLRepository) Delete(ctx context.Context, link *model.Link) error {
+	result := r.db.WithContext(ctx).Model(&model.Link{}).
+		Where("id = ? AND version = ?", link.ID, link.Version).
+		Updates(map[string]interface{}{
+			"delete_flag": "Y",
+			"version":     link.Version + 1,
+			"updated_at":  time.Now(),
+			"updated_by":  link.UpdatedBy,
+		})
 	if result.Error != nil {
 		return &errors.RepositoryError{Operation: "Delete", Err: result.Error}
 	}
