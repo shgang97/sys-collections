@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS links (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by VARCHAR(100),
     description VARCHAR(100),
-    delete_flag varchar(1),
+    delete_flag varchar(1) DEFAULT 'N',
     version INT UNSIGNED DEFAULT 0,
     INDEX idx_short_code (short_code),
     INDEX idx_created_by (created_by),
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS click_stats (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     updated_by VARCHAR(100),
     description VARCHAR(100),
-    delete_flag varchar(1),
+    delete_flag varchar(1) DEFAULT 'N',
     version INT UNSIGNED DEFAULT 0,
     INDEX idx_short_code (short_code),
     INDEX idx_created_at (created_at)
