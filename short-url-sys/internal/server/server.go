@@ -106,6 +106,9 @@ func (s *Server) Start() error {
 		return fmt.Errorf("failed to init services: %w", err)
 	}
 
+	// 设置路由
+	SetupRouter(s.config, s)
+
 	apiServer := s.config.Server.APIServer
 	addr := fmt.Sprintf("%s:%d", apiServer.Host, apiServer.Port)
 	s.server = &http.Server{

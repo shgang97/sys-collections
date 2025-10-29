@@ -14,8 +14,6 @@ func main() {
 
 	// 创建服务器
 	srv := server.New(cfg, nil)
-	// 设置路由
-	server.SetupRouter(cfg, srv)
 
 	// 启动服务器
 	if err := srv.Start(); err != nil {
