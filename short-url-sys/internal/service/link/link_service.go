@@ -265,8 +265,10 @@ func (s *linkService) DeleteLink(ctx context.Context, req *model.DeleteLinkReque
 func (s *linkService) ListLinks(ctx context.Context, req *model.ListLinksRequest) (*model.ListLinksResponse, error) {
 	filter := linkRepo.ListFilter{
 		CreatedBy: s.getUser(req.CreatedBy),
-		Status:    *req.Status,
 		Search:    "",
+	}
+	if req.Status != nil {
+		filter.Status = *req.Status
 	}
 	links, total, err := s.linkRepo.List(ctx, filter, req.Page, req.PageSize)
 	if err != nil {

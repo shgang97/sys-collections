@@ -105,7 +105,7 @@ func (r *MySQLRepository) List(ctx context.Context, filter ListFilter, page, pag
 
 	// 应用过滤器
 	if filter.CreatedBy != "" {
-		query = query.Where("create_by=?", filter.CreatedBy)
+		query = query.Where("created_by=?", filter.CreatedBy)
 	}
 	if filter.Status != "" {
 		query = query.Where("status=?", filter.Status)

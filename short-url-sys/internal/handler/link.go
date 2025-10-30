@@ -96,6 +96,69 @@ func (h *LinkHandler) UpdateLink(c *gin.Context) {
 	c.JSON(http.StatusOK, linkInfo)
 }
 
+// DeleteLink
+// @Router /api/v1/links/{code} [delete]
+func (h *LinkHandler) DeleteLink(c *gin.Context) {
+	shortCode := c.Param("code")
+	if shortCode == "" {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Error:   "invalid_short_code",
+			Message: "Short code is required",
+		})
+		return
+	}
+	// TODO 从上下文获取用户信息 c.Get("user")
+	updatedBy := "anonymous"
+	req := &model.DeleteLinkRequest{
+		ShortCode: &shortCode,
+		UpdatedBy: &updatedBy,
+	}
+	err := h.linkService.DeleteLink(c.Request.Context(), req)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.Status(http.StatusOK)
+}
+
+// ListLinks
+// @Router /api/v1/links [get]
+func (h *LinkHandler) ListLinks(c *gin.Context) {
+	var req model.ListLinksRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Error:   "invalid_request",
+			Message: "Invalid query parameters",
+		})
+		return
+	}
+	resp, err := h.linkService.ListLinks(c.Request.Context(), &req)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+// BatchCreate
+// @Router /api/v1/short/batch [post]
+func (h *LinkHandler) BatchCreate(c *gin.Context) {
+	var req model.BatchCreateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Error:   "invalid_request",
+			Message: "Invalid request body",
+		})
+		return
+	}
+	resp, err := h.linkService.BatchCreate(c.Request.Context(), &req)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
 // 构建完整的短链URL
 func (h *LinkHandler) buildShortURL(shortCode string) string {
 	return fmt.Sprintf("%s/%s", h.baseURL, shortCode)

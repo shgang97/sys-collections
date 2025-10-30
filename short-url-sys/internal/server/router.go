@@ -2,6 +2,7 @@ package server
 
 import (
 	"short-url-sys/internal/config"
+	"short-url-sys/internal/handler"
 	"short-url-sys/internal/model"
 	"short-url-sys/internal/server/middleware"
 	"time"
@@ -19,6 +20,8 @@ func SetupRouter(config *config.Config, srv *Server) {
 	router.Use(gin.Recovery())
 	router.Use(middleware.ErrorHandler())
 
+	// 初始化处理器
+	linkHandler := handler.NewLinkHandler(srv.linkSvc, config.Server.APIServer.BaseURL)
 	// 健康检查端点
 	router.GET("/health", func(c *gin.Context) {
 		health := model.HealthResponse{
@@ -51,6 +54,16 @@ func SetupRouter(config *config.Config, srv *Server) {
 
 	api := router.Group("/api/v1")
 	{
+		links := api.Group("/links")
+		{
+			links.POST("/short", linkHandler.CreateShortURL)
+			links.GET("/:code", linkHandler.GetLinkInfo)
+			links.PUT("/:code", linkHandler.UpdateLink)
+			links.DELETE("/:code", linkHandler.DeleteLink)
+			links.GET("", linkHandler.ListLinks)
+			links.POST("/short/batch", linkHandler.BatchCreate)
+		}
+
 		api.GET("/info", func(c *gin.Context) {
 			c.JSON(200, gin.H{
 				"service": "short-url-sys",
