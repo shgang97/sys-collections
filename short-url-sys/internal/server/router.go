@@ -22,6 +22,8 @@ func SetupRouter(config *config.Config, srv *Server) {
 
 	// 初始化处理器
 	linkHandler := handler.NewLinkHandler(srv.linkSvc, config.Server.APIServer.BaseURL)
+	redirectHandler := handler.NewRedirectHandler(srv.redirectSvc)
+
 	// 健康检查端点
 	router.GET("/health", func(c *gin.Context) {
 		health := model.HealthResponse{

@@ -98,6 +98,7 @@ func (s *redirectService) getLongURL(ctx context.Context, shortCode string) (str
 }
 
 func (s *redirectService) recordClick(ctx context.Context, shortCode string, req *RedirectRequest) error {
+	now := time.Now()
 	stats := &model.ClickStats{
 		ShortCode:  shortCode,
 		IPAddress:  req.IPAddress,
@@ -106,7 +107,11 @@ func (s *redirectService) recordClick(ctx context.Context, shortCode string, req
 		Country:    req.Country,
 		Region:     req.Region,
 		DeviceType: s.getDeviceType(req.UserAgent),
-		CreatedAt:  time.Now(),
+		CreatedAt:  now,
+		CreatedBy:  "anonymous",
+		UpdatedAt:  now,
+		UpdatedBy:  "anonymous",
+		DeleteFlag: "N",
 	}
 
 	// 记录点击
