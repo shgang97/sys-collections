@@ -63,3 +63,12 @@ type ErrorResponse struct {
 	Code    string `json:"code"`
 	Message string `json:"message,omitempty"`
 }
+
+type StatsResponse struct {
+	ShortCode   string           `json:"short_code"`
+	TotalClicks int64            `json:"total_clicks"`
+	DailyStats  []DailyStats     `json:"daily_stats,omitempty"`
+	Referrers   map[string]int64 `json:"referrers,omitempty"`
+	Countries   map[string]int64 `json:"countries,omitempty"`
+	Devices     map[string]int64 `json:"devices,omitempty"`
+}

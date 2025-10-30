@@ -23,7 +23,7 @@ func SetupRouter(config *config.Config, srv *Server) {
 	// 初始化处理器
 	linkHandler := handler.NewLinkHandler(srv.linkSvc, config.Server.APIServer.BaseURL)
 	redirectHandler := handler.NewRedirectHandler(srv.redirectSvc)
-
+	statsHandler := handler.NewStatsHandler(srv.statsSvc)
 	// 健康检查端点
 	router.GET("/health", func(c *gin.Context) {
 		health := model.HealthResponse{
@@ -56,6 +56,7 @@ func SetupRouter(config *config.Config, srv *Server) {
 
 	api := router.Group("/api/v1")
 	{
+		// 短链相关接口
 		links := api.Group("/links")
 		{
 			links.POST("/short", linkHandler.CreateShortURL)
@@ -64,6 +65,13 @@ func SetupRouter(config *config.Config, srv *Server) {
 			links.DELETE("/:code", linkHandler.DeleteLink)
 			links.GET("", linkHandler.ListLinks)
 			links.POST("/short/batch", linkHandler.BatchCreate)
+
+			// 短链统计相关接口
+			stats := links.Group("/stats")
+			{
+				stats.GET("/:code", statsHandler.GetLinkStats)
+				stats.GET("/daily/:code", statsHandler.GetDailyStats)
+			}
 		}
 
 		api.GET("/info", func(c *gin.Context) {

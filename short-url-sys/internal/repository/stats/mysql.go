@@ -111,7 +111,7 @@ func (r *MySQLRepository) GetDailyStats(ctx context.Context, shortCode string, d
 		SELECT 
 			DATE(created_at) as date,
 			COUNT(*) as clicks,
-			COUNT(DISTINCT ip_address) as ip_address,
+			COUNT(DISTINCT ip_address) as unique_ips
 		FROM click_stats
 		WHERE short_code = ? AND created_at >= ?
 		GROUP BY date

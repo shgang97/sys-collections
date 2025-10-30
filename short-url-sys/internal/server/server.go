@@ -13,6 +13,7 @@ import (
 	"short-url-sys/internal/service/idgen"
 	linkService "short-url-sys/internal/service/link"
 	redirectService "short-url-sys/internal/service/redirect"
+	statsService "short-url-sys/internal/service/stats"
 	"syscall"
 	"time"
 
@@ -32,6 +33,7 @@ type Server struct {
 	idGenerator idgen.Generator
 	linkSvc     linkService.Service
 	redirectSvc redirectService.Service
+	statsSvc    statsService.Service
 }
 
 func New(config *config.Config, router http.Handler) *Server {
@@ -90,6 +92,9 @@ func (s *Server) initServices() error {
 		s.statsRepo,
 		s.cacheRepo,
 	)
+
+	// 初始化统计服务
+	s.statsSvc = statsService.NewStatsService(s.statsRepo)
 
 	log.Println("✅ Services initialized successfully")
 	return nil
