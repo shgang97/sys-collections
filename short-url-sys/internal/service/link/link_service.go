@@ -177,7 +177,7 @@ func (s *linkService) GetLinkInfo(ctx context.Context, shortCode string) (*model
 }
 
 // UpdateLink 更新链接信息
-func (s *linkService) UpdateLink(ctx context.Context, shortCode string, req *model.UpdateLinkRequest) (*model.Link, error) {
+func (s *linkService) UpdateLink(ctx context.Context, shortCode string, req *model.UpdateLinkRequest) (*model.LinkInfoResponse, error) {
 	link, err := s.linkRepo.FindByShortCode(ctx, shortCode)
 	if err != nil {
 		return nil, err
@@ -221,8 +221,19 @@ func (s *linkService) UpdateLink(ctx context.Context, shortCode string, req *mod
 			}
 		}
 	}()
-
-	return link, nil
+	lastAccess, _ := s.statsRepo.GetLastAccessed(ctx, shortCode)
+	linkInfo := &model.LinkInfoResponse{
+		ShortCode:    link.ShortCode,
+		LongURL:      link.LongURL,
+		CreatedAt:    link.CreatedAt,
+		UpdatedAt:    link.UpdatedAt,
+		ExpiresAt:    link.ExpiresAt,
+		ClickCount:   link.ClickCount,
+		LastAccessed: lastAccess,
+		Status:       string(link.Status),
+		Description:  link.Description,
+	}
+	return linkInfo, nil
 }
 
 // DeleteLink 删除链接
