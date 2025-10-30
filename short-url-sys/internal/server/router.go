@@ -73,5 +73,8 @@ func SetupRouter(config *config.Config, srv *Server) {
 			})
 		})
 	}
+
+	// 重定向路由（放在最后，避免被API路由捕获）
+	router.GET("/:code", redirectHandler.Redirect)
 	srv.router = router
 }
