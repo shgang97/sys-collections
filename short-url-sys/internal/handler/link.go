@@ -68,6 +68,34 @@ func (h *LinkHandler) GetLinkInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, linkInfo)
 }
 
+// UpdateLink
+// @Router /api/v1/links/{code} [put]
+func (h *LinkHandler) UpdateLink(c *gin.Context) {
+	shortCode := c.Param("code")
+	if shortCode == "" {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Error:   "invalid_short_code",
+			Message: "Short code is required",
+		})
+		return
+	}
+	var req model.UpdateLinkRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Error:   "invalid_request",
+			Message: "Invalid request body",
+		})
+		return
+	}
+
+	linkInfo, err := h.linkService.UpdateLink(c.Request.Context(), shortCode, &req)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, linkInfo)
+}
+
 // 构建完整的短链URL
 func (h *LinkHandler) buildShortURL(shortCode string) string {
 	return fmt.Sprintf("%s/%s", h.baseURL, shortCode)
