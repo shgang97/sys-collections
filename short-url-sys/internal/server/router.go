@@ -24,6 +24,8 @@ func SetupRouter(config *config.Config, srv *Server) {
 	linkHandler := handler.NewLinkHandler(srv.linkSvc, config.Server.APIServer.BaseURL)
 	redirectHandler := handler.NewRedirectHandler(srv.redirectSvc)
 	statsHandler := handler.NewStatsHandler(srv.statsSvc)
+	qrcodeHandler := handler.NewQRCodeHandler(srv.linkSvc, config.Server.APIServer.BaseURL)
+
 	// 健康检查端点
 	router.GET("/health", func(c *gin.Context) {
 		health := model.HealthResponse{
@@ -71,6 +73,12 @@ func SetupRouter(config *config.Config, srv *Server) {
 			{
 				stats.GET("/:code", statsHandler.GetLinkStats)
 				stats.GET("/daily/:code", statsHandler.GetDailyStats)
+			}
+
+			// 生成二维码相关接口
+			qrcode := links.Group("/qrcode")
+			{
+				qrcode.GET("/:code", qrcodeHandler.GenerateQRCode)
 			}
 		}
 
