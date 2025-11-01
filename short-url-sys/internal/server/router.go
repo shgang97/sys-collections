@@ -57,6 +57,7 @@ func SetupRouter(config *config.Config, srv *Server) {
 	})
 
 	api := router.Group("/api/v1")
+	api.Use(middleware.RateLimit(10)) // 每分钟10个请求
 	{
 		// 短链相关接口
 		links := api.Group("/links")
